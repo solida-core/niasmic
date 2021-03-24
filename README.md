@@ -5,7 +5,7 @@
 # NIASMIC
 **NIASMIC** (Non Invasive Analysis of Somatic Mutations in Cancer) is a pipeline for Next-Generation Sequencing data analysis for identification of somatic mutations in tumoral and ctDNA.
 
-All **[solida-core](https://github.com/solida-core)** workflows follow GATK Best Practices for Germline Variant Discovery, with the incorporation of further improvements and refinements after their testing with real data in various [CRS4 Next Generation Sequencing Core Facility](http://next.crs4.it) research sequencing projects.
+All **[solida-core](https://github.com/solida-core)** workflows follow GATK Best Practices for Germline and Somatic Variant Discovery, with the incorporation of further improvements and refinements after their testing with real data in various [CRS4 Next Generation Sequencing Core Facility](http://next.crs4.it) research sequencing projects.
 
 Pipelines are based on [Snakemake](https://snakemake.readthedocs.io/en/stable/), a workflow management system that provides all the features needed to create reproducible and scalable data analyses.
 
