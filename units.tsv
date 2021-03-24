@@ -1,0 +1,6 @@
+sample	unit	fq1	fq2
+DNA16P	HLFLMB6X5.L001.DNA16P	path_to_datasets/06Pblood_R1.fastq.gz	path_to_datasets/06Pblood_R2.fastq.gz
+DNA26P	H3KJ6B6X5.L001.DNA26P	path_to_datasets/06P_R1.fastq.gz	path_to_datasets/06P_R2.fastq.gz
+DNA17P	HLFLMB6X5.L001.DNA17P	path_to_datasets/07Pblood_R1.fastq.gz	path_to_datasets/07Pblood_R2.fastq.gz
+DNA27P	H3KJ6B6X5.L001.DNA27P	path_to_datasets/07P_R1.fastq.gz	path_to_datasets/07P_R2.fastq.gz
+DNA27P	H4KJ6B6X3.L001.DNA27P	path_to_datasets/07P2_R1.fastq.gz	path_to_datasets/07P2_R2.fastq.gz
