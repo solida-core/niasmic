@@ -3,6 +3,5 @@ channels:
 - conda-forge
 - defaults
 dependencies:
-- snakemake==5.2
-- drmaa==0.7.8
-- gatk4=4.0.11.0
+- snakemake
+- drmaa==0.7.9

@@ -19,13 +19,15 @@ localrules: all, pre_rename_fastq_pe, post_rename_fastq_pe
 rule all:
     input:
         expand("reads/recalibrated/{sample.sample}.dedup.recal.bam", sample=samples.reset_index().itertuples()),
+        # expand("reads/fgbio/{sample.sample}.consensus.bam", sample=samples.reset_index().itertuples()),
 #        expand("data/results/{sample.patient}_somatic.vcf.gz",sample=samples.reset_index().itertuples()),
 #        expand("data/results/{patient.patient}_somatic_twicefiltered_selected.vcf.gz", patient=patients.reset_index().itertuples()),
-        "qc/bedtools/heatmap_enriched_regions.png",
-        expand("annotation/{patient.patient}/bcftools/selected.annot.lightened.xlsx", patient=patients.reset_index().itertuples()),
+#         "qc/bedtools/heatmap_enriched_regions.png",
+        # expand("annotation/{patient.patient}/bcftools/selected.annot.lightened.xlsx", patient=patients.reset_index().itertuples()),
         "qc/multiqc.html",
+        expand("data/results/{patient.patient}_funcotated.maf", patient=patients.reset_index().itertuples()),
     #    expand("qc/bedtools/{sample.sample}.coverage.tsv", sample=samples.reset_index().itertuples()),
-        expand("qc/{patient.patient}.multicov.tsv", patient=patients.reset_index().itertuples())
+    #     expand("qc/{patient.patient}.multicov.tsv", patient=patients.reset_index().itertuples())
 
 
 
@@ -33,15 +35,15 @@ rule all:
 include_prefix="rules"
 dima_path="dima/"
 include:
-    dima_path + include_prefix + "/trimming.smk"
+    include_prefix + "/trimming.smk"
 include:
-    dima_path + include_prefix + "/alignment.smk"
+    include_prefix + "/alignment.smk"
 include:
-    dima_path + include_prefix + "/samtools.smk"
+    include_prefix + "/samtools.smk"
 include:
-    dima_path + include_prefix + "/picard.smk"
+    include_prefix + "/umi_fgbio.smk"
 include:
-    dima_path + include_prefix + "/bsqr.smk"
+    include_prefix + "/bsqr.smk"
 include:
     include_prefix + "/mutect_call.smk"
 include:

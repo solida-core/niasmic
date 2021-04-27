@@ -1,5 +1,80 @@
 
 
+rule picard_duplicate_estimation:
+    input:
+        bam="reads/merged/{sample}.bam",
+        bai="reads/merged/{sample}.bam.bai"
+    output:
+        bam="qc/picard/UMIstats/bam/{sample}.bam",
+        metrics="qc/picard/UMIstats/{sample}.duplicate_metrics.txt",
+        umi="qc/picard/UMIstats/{sample}.umi_metrics.txt"
+    params:
+        custom=java_params(tmp_dir=config.get("tmp_dir"),multiply_by=5),
+        genome=resolve_single_filepath(*references_abs_path(),config.get("genome_fasta")),
+    shell:
+        "picard UmiAwareMarkDuplicatesWithMateCigar "
+        "-I={input.bam} "
+        "-O={output.bam} "
+        "-M={output.metrics} "
+        "-UMI_METRICS={output.umi} "
+
+
+rule picard_HsMetrics:
+    input:
+        bam="reads/recalibrated/{sample}.dedup.recal.bam",
+#        probes="references/{sample}_probes_header",
+#        hsTarget="references/{sample}_hsTarget_header"
+    output:
+        "qc/picard/hs/{sample}.dedup.recal.hs.txt"
+    conda:
+        "../envs/picard.yaml"
+    params:
+        custom=java_params(tmp_dir=config.get("tmp_dir"), multiply_by=5),
+        probes=config.get("bait"),
+        target=config.get("target")
+    benchmark:
+        "benchmarks/picard/HsMetrics/{sample}.txt"
+    shell:
+        "picard {params.custom} CollectHsMetrics "
+        "INPUT={input.bam} OUTPUT={output} "
+        # "BAIT_INTERVALS={input.probes} TARGET_INTERVALS={input.hsTarget} "
+        "BAIT_INTERVALS={params.probes} TARGET_INTERVALS={params.target} "
+        "CLIP_OVERLAPPING_READS=true MINIMUM_MAPPING_QUALITY=-1 MINIMUM_BASE_QUALITY=-1 "
+
+
+rule picard_InsertSizeMetrics:
+   input:
+      bam="reads/recalibrated/{sample}.dedup.recal.bam"
+   output:
+       metrics="qc/picard/hs/{sample}.dedup.recal.is.txt",
+       histogram="qc/picard/hs/{sample}.dedup.recal.is.pdf"
+   conda:
+       "../envs/picard.yaml"
+   params:
+        custom=java_params(tmp_dir=config.get("tmp_dir"), multiply_by=5),
+   benchmark:
+       "benchmarks/picard/IsMetrics/{sample}.txt"
+   shell:
+       "picard {params.custom} CollectInsertSizeMetrics "
+       "INPUT={input.bam} "
+       "OUTPUT={output.metrics} "
+       "HISTOGRAM_FILE={output.histogram} "
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 rule picard_gc_bias:

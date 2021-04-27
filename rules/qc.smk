@@ -5,7 +5,12 @@ rule multiqc:
 #        expand("qc/fastqc/{unit.unit}-R1_fastqc.zip", unit=units.reset_index().itertuples()),
 #        expand("qc/fastqc/trimmed_{unit.unit}_fastqc.zip", unit=units.reset_index().itertuples()),
 #        expand("reads/trimmed/{unit.unit}-R1.fq.gz_trimming_report.txt", unit=units.reset_index().itertuples()),
-         expand("qc/picard/{sample.sample}_gc_bias_metrics.txt",sample=samples.reset_index().itertuples()),
+        expand("qc/picard/UMIstats/{sample.sample}.duplicate_metrics.txt",sample=samples.reset_index().itertuples()),
+        expand("qc/picard/hs/{sample.sample}.dedup.recal.hs.txt",sample=samples.reset_index().itertuples()),
+        expand("qc/picard/hs/{sample.sample}.dedup.recal.is.txt",sample=samples.reset_index().itertuples()),
+        expand("qc/picard/{sample.sample}_gc_bias_metrics.txt",sample=samples.reset_index().itertuples()),
+        expand("qc/picard/{sample.sample}_summary_metrics.txt",sample=samples.reset_index().itertuples()),
+        expand("qc/picard/{sample.sample}_gc_bias_metrics.txt",sample=samples.reset_index().itertuples()),
     output:
         "qc/multiqc.html"
     params:

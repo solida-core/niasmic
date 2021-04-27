@@ -19,12 +19,22 @@ known_variants:
 
 tmp_dir: "path_to_tmp_dir"
 
+interval_list: "/ELS/els9/users/biosciences/projects/niasmic/niasmic.bed"
+pon: "resources/panelofnormals.vcf"
+germline: "resources/af-only-gnomad.vcf.gz"
+exac: "resources/small_exac_common_3.vcf.gz"
+funcotator:
+depthofcov_intervals: "/ELS/els9/users/biosciences/projects/niasmic/hg19_refseq_select.refseq"
+bait: "/ELS/els9/users/biosciences/references/niasmic/niasmic_panel_BAITS.interval_list"
+target: "/ELS/els9/users/biosciences/references/niasmic/niasmic_panel_TARGET.interval_list"
+
+
 rules:
     bwa-mem:
         arguments: "-M"
         platform: "illumina"
     multiqc:
-        arguments: "--force --cl_config 'picard_config: { general_stats_target_coverage: [10,20,30] }' --interactive --cl_config 'max_table_rows: 700'"
+        arguments: "--force --interactive --cl_config 'max_table_rows: 700'"
     trim_galore_pe:
         arguments: "--paired -q 20 --cores 4 --fastqc --fastqc_args '--outdir qc/fastqc --quiet'"
     trim_galore_se:
@@ -76,29 +86,18 @@ rules:
         params: ""
     mutect:
         params: "--disable-read-filter MateOnSameContigOrNoMappedMateReadFilter " #strange: "--genotype-germline-sites true"
+    vep:
+        arguments: [
+                   ["--sift p --polyphen p --gene_phenotype --regulatory", ""],
+                   ["--uniprot --ccds --symbol --protein --tsl --canonical --mane --domains --biotype --pick_order canonical,refseq,biotype,ccds,rank,appris,tsl", ""],
+                   ["--check_existing --clin_sig_allele 1 --max_af --af_gnomad --pubmed --variant_class ", ""],
+                   ]
+        cache_dir: "path/to/vep"
+        species: "homo_sapiens"
+        assembly: "GRCh37"
 
-
-
-interval_list: "resources/interval.interval_list"
-pon: "resources/panelofnormals.vcf"
-germline: "resources/af-only-gnomad.vcf.gz"
-exac: "resources/small_exac_common_3.vcf.gz"
-
-intervals:
-
-    AgilentSureSelectHumanAllExonV7:
-        bedTarget: "intervals/AgilentSureSelectHumanAllExonV7_Target.bed"
-        probes: "intervals/AgilentSureSelectHumanAllExonV7_Probes.HybridSelection"
-        hsTarget: "intervals/AgilentSureSelectHumanAllExonV7_Target.HybridSelection"
-
-    ccds:
-        bedTarget: "intervals/ccds_hg19_Target.bed"
-        probes: "intervals/ccds_hg19_Probes.HybridSelection"
-        hsTarget: "intervals/ccds_hg19_Target.HybridSelection"
-
-
-intervals_default: "AgilentSureSelectHumanAllExonV7"
-samples_intervals:
-    DNA16-0389-R0001: "AgilentSureSelectHumanAllExonV7"
-
+#interval_list: "resources/interval.interval_list"
+#pon: "resources/panelofnormals.vcf"
+#germline: "resources/af-only-gnomad.vcf.gz"
+#exac: "resources/small_exac_common_3.vcf.gz"
 

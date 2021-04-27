@@ -82,3 +82,42 @@ rule coverage_heatmap:
         "../envs/heatmap.yaml"
     script:
         "scripts/heatmap.R"
+
+
+
+rule gatk_DepthOfCoverage:
+    input:
+        cram="reads/recalibrated/{sample}.dedup.recal.bam",
+        crai="reads/recalibrated/{sample}.dedup.recal.bam.bai"
+    output:
+        "reads/recalibrated/{sample}.sample_gene_summary"
+    params:
+        genome=resolve_single_filepath(*references_abs_path(), config.get("genome_fasta")),
+        gatk_intervals=config.get("depthofcov_intervals"),
+        intervals=config.get("interval_list"),
+        prefix="reads/recalibrated/{sample}"
+    conda:
+        "../envs/gatk.yaml"
+    benchmark:
+        "benchmarks/gatk/DepthOfCoverage/{sample}.txt"
+    log:
+        "logs/gatk/DepthOfCoverage/{sample}.txt"
+    threads:
+        4
+    shell:
+        "gatk DepthOfCoverage "
+        "--omit-depth-output-at-each-base --omit-locus-table "
+        "-R {params.genome} "
+        "-O {params.prefix} "
+        "-I {input.cram} "
+        "-gene-list {params.gatk_intervals} "
+        "--summary-coverage-threshold 10 --summary-coverage-threshold 30 --summary-coverage-threshold 50 "
+        "--summary-coverage-threshold 10 "
+        "--summary-coverage-threshold 60 "
+        "--summary-coverage-threshold 100 "
+        "--summary-coverage-threshold 400 "
+        "--summary-coverage-threshold 3000 "
+        "-L {params.intervals} "
+        ">& {log} "
+
+
