@@ -12,8 +12,7 @@ def get_known_sites(known_sites=['dbsnp','mills','ph1_indel']):
 
 rule gatk_BQSR_data_processing:
     input:
-        # bam="reads/dedup/{sample}.dedup.bam"
-        bam="reads/fgbio/dedup/{sample}.umi.dedup.bam"
+        bam="reads/dedup/{sample}.dedup.bam"
     output:
         "reads/recalibrated/{sample}.recalibrate.grp"
     conda:
@@ -38,8 +37,7 @@ rule gatk_BQSR_data_processing:
 
 rule gatk_ApplyBQSR:
     input:
-        # bam="reads/dedup/{sample}.dedup.bam"
-        bam="reads/fgbio/dedup/{sample}.umi.dedup.bam",
+        bam="reads/dedup/{sample}.dedup.bam",
         bqsr="reads/recalibrated/{sample}.recalibrate.grp"
     output:
         bam="reads/recalibrated/{sample}.dedup.recal.bam",

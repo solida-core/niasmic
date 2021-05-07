@@ -3,9 +3,11 @@
 rule filter_mutect:
     input:
         vcf="data/results/{patient}_somatic.vcf.gz",
-        cont_tab="data/filters/{patient}_contamination.table"
+        cont_tab="data/filters/{patient}_contamination.table",
+        orient="data/filters/{patient}_read-orientation-model.tar.gz",
+        segments="data/filters/{patient}_tumor.segment"
     output:
-        "data/results/{patient}_somatic_filtered.vcf.gz"
+        vcf="data/results/{patient}_somatic_filtered.vcf.gz"
     params:
         custom=java_params(tmp_dir=config.get("tmp_dir"), multiply_by=5),
         genome=resolve_single_filepath(*references_abs_path(), config.get("genome_fasta")),
@@ -19,13 +21,13 @@ rule filter_mutect:
         "gatk FilterMutectCalls "
         "--java-options {params.custom} "
         "-V {input.vcf} "
-        "--tumor-segmentation "
+        "--tumor-segmentation {input.segments} "
         "--contamination-table {input.cont_tab} "
-        "--ob-priors "
+        "--ob-priors {input.orient} "
         "-O {output} "
         "-R {params.genome} "
         "-L {params.intervals} "
-        "--native-pair-hmm-threads {threads} "
+        # "--native-pair-hmm-threads {threads} "
         ">& {log} "
 
 
@@ -78,12 +80,12 @@ rule gatk_Funcotator:
         "gatk Funcotator "
         "--java-options {params.custom} "
         "-R {params.genome} "
-        "-L {params.intervals}"
+        "-L {params.intervals} "
         "-V {input.vcf} "
         "-O {output.vcf} "
-        "--data-sources-path {params.resource}"
+        "--data-sources-path {params.resource} "
         "--output-file-format MAF "
-        "--ref-version hg19"
+        "--ref-version hg19 "
         ">& {log} "
 
 

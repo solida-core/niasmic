@@ -90,3 +90,17 @@ rule samtools_index_cram:
     shell:
         "samtools index "
         "{input} "
+
+
+rule samtools_index_umigroup:
+    input:
+        "reads/group/{sample}_grouped.bam"
+    output:
+         "reads/group/{sample}_grouped.bam.bai"
+    conda:
+        "../envs/samtools.yaml"
+    benchmark:
+        "benchmarks/samtools/index_umigrouped/{sample}.txt"
+    shell:
+        "samtools index "
+        "{input} "

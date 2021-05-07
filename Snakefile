@@ -41,7 +41,7 @@ include:
 include:
     include_prefix + "/samtools.smk"
 include:
-    include_prefix + "/umi_fgbio.smk"
+    include_prefix + "/umi.smk"
 include:
     include_prefix + "/bsqr.smk"
 include:

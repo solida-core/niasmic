@@ -3,7 +3,7 @@ rule somatic_discovery:
         lambda wildcards: get_sample_by_famid(wildcards, patients)
     output:
         vcf="data/results/{patient}_somatic.vcf.gz",
-        bam="data/results/{patient}_tumor_normal.bam",
+        # bam="data/results/{patient}_tumor_normal.bam",
         fir="data/results/{patient}_tumor_normal_f1r2.tar.gz"
     params:
         custom=java_params(tmp_dir=config.get("tmp_dir"), multiply_by=5),

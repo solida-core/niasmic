@@ -2,7 +2,7 @@
 samples: ../conf/samples.tsv
 units: ../conf/units.tsv
 patients: ../conf/patients.tsv
-
+reheader: ../conf/reheader.tsv
 
 references:
     basepath: "path_to_references_data"
@@ -36,7 +36,8 @@ rules:
     multiqc:
         arguments: "--force --interactive --cl_config 'max_table_rows: 700'"
     trim_galore_pe:
-        arguments: "--paired -q 20 --cores 4 --fastqc --fastqc_args '--outdir qc/fastqc --quiet'"
+        arguments: "--paired -q 20 --fastqc --fastqc_args '--outdir qc/fastqc --quiet'"
+        arguments_100: "--hardtrim5 100 "
     trim_galore_se:
         arguments: "-q 20 --fastqc --fastqc_args '--outdir qc/fastqc --quiet'"
     picard_MarkDuplicates:
@@ -85,7 +86,7 @@ rules:
     bedtools_coverage:
         params: ""
     mutect:
-        params: "--disable-read-filter MateOnSameContigOrNoMappedMateReadFilter " #strange: "--genotype-germline-sites true"
+        params: "--disable-read-filter MateOnSameContigOrNoMappedMateReadFilter --disable-read-filter NotDuplicateReadFilter --disable-read-filter NotSecondaryAlignmentReadFilter" #strange: "--genotype-germline-sites true"
     vep:
         arguments: [
                    ["--sift p --polyphen p --gene_phenotype --regulatory", ""],
@@ -95,9 +96,13 @@ rules:
         cache_dir: "path/to/vep"
         species: "homo_sapiens"
         assembly: "GRCh37"
+    filter_vep:
+        arguments: ""
+    bcftools_remove:
+        fields_to_remove: ""
+    vcf_to_tabular:
+        params: ""
+    vep_to_tsv:
+        fields: ""
 
-#interval_list: "resources/interval.interval_list"
-#pon: "resources/panelofnormals.vcf"
-#germline: "resources/af-only-gnomad.vcf.gz"
-#exac: "resources/small_exac_common_3.vcf.gz"
 

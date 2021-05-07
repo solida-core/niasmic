@@ -18,7 +18,7 @@ rule learn_orientation_model:
         "gatk LearnReadOrientationModel "
         "--java-options {params.custom} "
         "-I {input} "
-        "-L {params.intervals} "
+        # "-L {params.intervals} "
         "-O {output} "
         ">& {log} "
 

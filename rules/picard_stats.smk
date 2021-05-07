@@ -3,7 +3,9 @@
 rule picard_duplicate_estimation:
     input:
         bam="reads/merged/{sample}.bam",
-        bai="reads/merged/{sample}.bam.bai"
+        bai="reads/merged/{sample}.bam.bai",
+        # bam="reads/group/{sample}_grouped.bam",
+        # bai="reads/group/{sample}_grouped.bam.bai"
     output:
         bam="qc/picard/UMIstats/bam/{sample}.bam",
         metrics="qc/picard/UMIstats/{sample}.duplicate_metrics.txt",
@@ -11,40 +13,51 @@ rule picard_duplicate_estimation:
     params:
         custom=java_params(tmp_dir=config.get("tmp_dir"),multiply_by=5),
         genome=resolve_single_filepath(*references_abs_path(),config.get("genome_fasta")),
+    conda:
+        "../envs/picard.yaml"
     shell:
-        "picard UmiAwareMarkDuplicatesWithMateCigar "
-        "-I={input.bam} "
-        "-O={output.bam} "
-        "-M={output.metrics} "
-        "-UMI_METRICS={output.umi} "
+        "mkdir -p qc/picard/UMIstats/bam ; "
+        "picard "
+        "{params.custom} "
+        "UmiAwareMarkDuplicatesWithMateCigar "
+        "-I {input.bam} "
+        "-O {output.bam} "
+        "-M {output.metrics} "
+        "-UMI_METRICS {output.umi} "
+        "--UMI_TAG_NAME RX --ALLOW_MISSING_UMIS true " # nei grouped il TAG è BX
 
 
 rule picard_HsMetrics:
     input:
-        bam="reads/recalibrated/{sample}.dedup.recal.bam",
+        bam="reads/merged/{sample}.bam",
 #        probes="references/{sample}_probes_header",
 #        hsTarget="references/{sample}_hsTarget_header"
     output:
-        "qc/picard/hs/{sample}.dedup.recal.hs.txt"
+        hs="qc/picard/hs/{sample}.dedup.recal.hs.txt",
+        target="qc/picard/hs/{sample}.pertarget.hs.txt"
     conda:
         "../envs/picard.yaml"
     params:
         custom=java_params(tmp_dir=config.get("tmp_dir"), multiply_by=5),
         probes=config.get("bait"),
-        target=config.get("target")
+        target=config.get("target"),
+        genome=resolve_single_filepath(*references_abs_path(),config.get("genome_fasta"))
     benchmark:
         "benchmarks/picard/HsMetrics/{sample}.txt"
     shell:
         "picard {params.custom} CollectHsMetrics "
-        "INPUT={input.bam} OUTPUT={output} "
+        "INPUT={input.bam} "
+        "OUTPUT={output.hs} "
         # "BAIT_INTERVALS={input.probes} TARGET_INTERVALS={input.hsTarget} "
         "BAIT_INTERVALS={params.probes} TARGET_INTERVALS={params.target} "
         "CLIP_OVERLAPPING_READS=true MINIMUM_MAPPING_QUALITY=-1 MINIMUM_BASE_QUALITY=-1 "
+        "PER_TARGET_COVERAGE={output.target} "
+        "REFERENCE_SEQUENCE={params.genome} "
 
 
 rule picard_InsertSizeMetrics:
    input:
-      bam="reads/recalibrated/{sample}.dedup.recal.bam"
+      bam="reads/merged/{sample}.bam"
    output:
        metrics="qc/picard/hs/{sample}.dedup.recal.is.txt",
        histogram="qc/picard/hs/{sample}.dedup.recal.is.pdf"
@@ -61,25 +74,9 @@ rule picard_InsertSizeMetrics:
        "HISTOGRAM_FILE={output.histogram} "
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 rule picard_gc_bias:
     input:
-        "reads/recalibrated/{sample}.dedup.recal.bam"
+        "reads/merged/{sample}.bam"
     output:
         chart="qc/picard/{sample}_gc_bias_metrics.pdf",
         summary="qc/picard/{sample}_summary_metrics.txt",
