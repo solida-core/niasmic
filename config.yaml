@@ -4,6 +4,8 @@ units: ../conf/units.tsv
 patients: ../conf/patients.tsv
 reheader: ../conf/reheader.tsv
 
+fastq_numb: 2
+
 references:
     basepath: "path_to_references_data"
     provider: "reference_provider"
