@@ -176,3 +176,16 @@ def ensure_dir(path, force=False):
         if not os.path.isdir(path):
             raise
 
+def _multi_flag_dbi(flag, arguments):
+    if arguments:
+        return " ".join(flag + " " + arg for arg in arguments)
+    return ''
+
+
+def get_sample_by_set(wildcards, sets, label='sample'):
+    for sample_set in sets.loc[wildcards.set,[label]]:
+        sample_args=''
+        for x in sample_set.split(','):
+            sample_args= sample_args+' -sn '+x
+        #print(sample_args)
+        return str(sample_args)

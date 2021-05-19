@@ -11,24 +11,31 @@ include:
 samples = pd.read_csv(config["samples"], index_col=["sample"],sep='\t')
 units = pd.read_csv(config["units"], index_col=["unit"], dtype=str,sep='\t')
 patients = pd.read_csv(config["patients"], index_col=["patient"],sep='\t')
+sets = pd.read_csv(config["sets"], index_col=["set"], dtype=str, sep="\t")
+plasma_samples = samples[samples["sample_type"]=="Pl"]
 
+
+#pd.read_csv(config["samples"], index_col=["sample"],sep='\t')
 
 ###
 localrules: all, pre_rename_fastq_pe, post_rename_fastq_pe
 
 rule all:
     input:
-        expand("reads/recalibrated/{sample.sample}.dedup.recal.bam", sample=samples.reset_index().itertuples()),
+        expand("reads/recalibrated/{sample.sample}.dedup.recal.bam",sample=samples.reset_index().itertuples()),
         # expand("reads/fgbio/{sample.sample}.consensus.bam", sample=samples.reset_index().itertuples()),
-#        expand("data/results/{sample.patient}_somatic.vcf.gz",sample=samples.reset_index().itertuples()),
-#        expand("data/results/{patient.patient}_somatic_twicefiltered_selected.vcf.gz", patient=patients.reset_index().itertuples()),
-#         "qc/bedtools/heatmap_enriched_regions.png",
+        #        expand("data/results/{sample.patient}_somatic.vcf.gz",sample=samples.reset_index().itertuples()),
+        #        expand("data/results/{patient.patient}_somatic_twicefiltered_selected.vcf.gz", patient=patients.reset_index().itertuples()),
+        #         "qc/bedtools/heatmap_enriched_regions.png",
+        "variant_calling/all.vcf.gz",
+        "variant_calling/all.snp_recalibrated.indel_recalibrated.vcf.gz",
         # expand("annotation/{patient.patient}/bcftools/selected.annot.lightened.xlsx", patient=patients.reset_index().itertuples()),
         "qc/multiqc.html",
-        expand("data/results/{patient.patient}_funcotated.maf", patient=patients.reset_index().itertuples()),
-    #    expand("qc/bedtools/{sample.sample}.coverage.tsv", sample=samples.reset_index().itertuples()),
-    #     expand("qc/{patient.patient}.multicov.tsv", patient=patients.reset_index().itertuples())
-
+        expand("data/results/{patient.patient}_funcotated.maf",patient=patients.reset_index().itertuples()),
+        #    expand("qc/bedtools/{sample.sample}.coverage.tsv", sample=samples.reset_index().itertuples()),
+        #     expand("qc/{patient.patient}.multicov.tsv", patient=patients.reset_index().itertuples())
+        #        "qc/picard/vcf_metrics.txt",
+        expand("variant_calling/SelectVariants/{set.set}.selected.vcf",set=sets.reset_index().itertuples())
 
 
 ##### load rules #####
@@ -64,3 +71,11 @@ include:
     include_prefix + "/picard_stats.smk"
 include:
     include_prefix + "/coverage.smk"
+include:
+    include_prefix + "/call_variants.smk"
+include:
+    include_prefix + "/joint_call.smk"
+include:
+    include_prefix + "/vsqr.smk"
+include:
+    include_prefix + "/vcf.smk"

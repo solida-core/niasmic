@@ -3,6 +3,7 @@ samples: ../conf/samples.tsv
 units: ../conf/units.tsv
 patients: ../conf/patients.tsv
 reheader: ../conf/reheader.tsv
+sets: ../conf/sets.tsv
 
 fastq_numb: 2
 
@@ -29,6 +30,7 @@ funcotator:
 depthofcov_intervals: "/ELS/els9/users/biosciences/projects/niasmic/hg19_refseq_select.refseq"
 bait: "/ELS/els9/users/biosciences/references/niasmic/niasmic_panel_BAITS.interval_list"
 target: "/ELS/els9/users/biosciences/references/niasmic/niasmic_panel_TARGET.interval_list"
+db_suffix: "db_suffix"
 
 
 rules:
