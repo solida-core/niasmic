@@ -15,7 +15,6 @@ sets = pd.read_csv(config["sets"], index_col=["set"], dtype=str, sep="\t")
 plasma_samples = samples[samples["sample_type"]=="Pl"]
 
 
-#pd.read_csv(config["samples"], index_col=["sample"],sep='\t')
 
 ###
 localrules: all, pre_rename_fastq_pe, post_rename_fastq_pe
@@ -35,8 +34,8 @@ rule all:
         #    expand("qc/bedtools/{sample.sample}.coverage.tsv", sample=samples.reset_index().itertuples()),
         #     expand("qc/{patient.patient}.multicov.tsv", patient=patients.reset_index().itertuples())
         #        "qc/picard/vcf_metrics.txt",
-        expand("variant_calling/SelectVariants/{set.set}.selected.vcf",set=sets.reset_index().itertuples())
-
+        expand("variant_calling/SelectVariants/{set.set}.selected.vcf",set=sets.reset_index().itertuples()),
+        expand("variant_calling/{sample.sample}.pileup.txt",sample=samples[samples["sample_type"]=="Pl"].reset_index().itertuples()),
 
 ##### load rules #####
 include_prefix="rules"
@@ -79,3 +78,5 @@ include:
     include_prefix + "/vsqr.smk"
 include:
     include_prefix + "/vcf.smk"
+include:
+    include_prefix + "/plasma_pileup.smk"

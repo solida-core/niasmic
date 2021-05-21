@@ -47,7 +47,7 @@ rule umi_group:
         "--chimeric-pairs=discard "
         "-L {log} "
         "--temp-dir={params.tmp_dir} "
-        "-umi-separator=':' "
+        "--umi-separator=':' "
 
 
 rule umi_dedup:
@@ -64,7 +64,7 @@ rule umi_dedup:
         tmp_dir=config.get("tmp_dir"),
         stats="qc/umitools/{sample}_dedup_stats"
     shell:
-        # "mkdir -p qc/umitools ;"
+        "mkdir -p qc/umitools ;"
         "umi_tools dedup "
         "-I {input[0]} "
         "-S {output} "
