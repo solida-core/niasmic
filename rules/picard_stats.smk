@@ -100,3 +100,26 @@ rule picard_gc_bias:
         "CHART={output.chart} "
         "S={output.summary} "
         "O={output.out} "
+
+
+rule picard_alignmetrics:
+    input:
+        "reads/recalibrated/{sample}.dedup.recal.bam"
+    output:
+        out="qc/picard/{sample}_alinment_metrics.txt"
+    params:
+        custom=java_params(tmp_dir=config.get("tmp_dir"), multiply_by=5),
+        genome=resolve_single_filepath(*references_abs_path(), config.get("genome_fasta")),
+    log:
+        "logs/picard/CollectAlignmentSummaryMetrics/{sample}.alignmetrics.log"
+    conda:
+       "../envs/picard.yaml"
+    threads: conservative_cpu_count(reserve_cores=2, max_cores=99)
+    shell:
+        "picard "
+        "CollectAlignmentSummaryMetrics "
+        "{params.custom} "
+        "I={input} "
+        "R={params.genome} "
+        "O={output.out} "
+

@@ -50,11 +50,10 @@ rule umi_group:
         "umi_tools group "
         "-I {input[0]} "
         "--output-bam "
-        "--paired "
         "-S {output} "
-        "--chimeric-pairs=discard "
         "-L {log} "
         "--temp-dir={params.tmp_dir} "
+        "--umi-separator='_' "
 
 rule umi_dedup:
     input:
@@ -77,3 +76,5 @@ rule umi_dedup:
         "--output-stats {params.stats} "
         "-L {log} "
         "--temp-dir={params.tmp_dir} "
+        "--umi-tag='BX' "
+        "--extract-umi-method tag "

@@ -9,7 +9,8 @@ rule multiqc:
         expand("qc/picard/hs/{sample.sample}.dedup.recal.hs.txt",sample=samples.reset_index().itertuples()),
         expand("qc/picard/hs/{sample.sample}.dedup.recal.is.txt",sample=samples.reset_index().itertuples()),
         expand("qc/picard/{sample.sample}_gc_bias_metrics.txt",sample=samples.reset_index().itertuples()),
-        expand("qc/picard/{sample.sample}_summary_metrics.txt",sample=samples.reset_index().itertuples())
+        expand("qc/picard/{sample.sample}_summary_metrics.txt",sample=samples.reset_index().itertuples()),
+        expand("qc/picard/{sample.sample}_alinment_metrics.txt", sample=samples.reset_index().itertuples()),
     output:
         "qc/multiqc.html"
     params:
