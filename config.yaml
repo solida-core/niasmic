@@ -6,6 +6,7 @@ reheader: ../conf/reheader.tsv
 sets: ../conf/sets.tsv
 
 fastq_numb: 2
+pe: "yes"
 
 references:
     basepath: "path_to_references_data"
@@ -23,6 +24,8 @@ known_variants:
 tmp_dir: "path_to_tmp_dir"
 
 interval_list: "/ELS/els9/users/biosciences/projects/niasmic/niasmic.bed"
+interval_list_gz: "/ELS/els9/users/biosciences/projects/niasmic/niasmic.bed.gz"
+dbsnp_gz: "/ELS/els9/users/m.massidda/gatk_test/dbSNP146_chr.vcf.gz"
 pon: "resources/panelofnormals.vcf"
 germline: "resources/af-only-gnomad.vcf.gz"
 exac: "resources/small_exac_common_3.vcf.gz"
@@ -31,6 +34,7 @@ depthofcov_intervals: "/ELS/els9/users/biosciences/projects/niasmic/hg19_refseq_
 bait: "/ELS/els9/users/biosciences/references/niasmic/niasmic_panel_BAITS.interval_list"
 target: "/ELS/els9/users/biosciences/references/niasmic/niasmic_panel_TARGET.interval_list"
 db_suffix: "db_suffix"
+somatic_combiner: "somaticCombiner.jar"
 
 
 rules:

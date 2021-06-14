@@ -35,23 +35,46 @@ rule all:
         #     expand("qc/{patient.patient}.multicov.tsv", patient=patients.reset_index().itertuples())
         #        "qc/picard/vcf_metrics.txt",
         expand("variant_calling/SelectVariants/{set.set}.selected.vcf",set=sets.reset_index().itertuples()),
-        expand("variant_calling/{sample.sample}.pileup.txt",sample=samples[samples["sample_type"]=="Pl"].reset_index().itertuples()),
+#        expand("variant_calling/{sample.sample}.pileup.txt",sample=samples[samples["sample_type"]=="Pl"].reset_index().itertuples()),
+#        expand("variant_calling/strelka/{patient.patient}.strelka.somatic.snvs.vcf.gz",patient=patients.reset_index().itertuples()),
+#        expand("variant_calling/varscan2/{patient.patient}.varscan.snp.vcf",patient=patients.reset_index().itertuples()),
+#        expand("variant_calling/vardict/{patient.patient}.vardict.vcf",patient=patients.reset_index().itertuples()),
+        expand("somatic_combiner/{patient.patient}.somatic_combiner.vcf",patient=patients.reset_index().itertuples()),
+        expand("somaticseq/{patient.patient}/Consensus.sSNV.vcf",patient=patients.reset_index().itertuples()),
+        expand("somatic_combiner/{patient.patient}.somatic_combiner_annotated.flt.txt",patient=patients.reset_index().itertuples()),
 
 ##### load rules #####
 include_prefix="rules"
 dima_path="dima/"
-include:
-    include_prefix + "/trimming.smk"
-include:
-    include_prefix + "/alignment.smk"
+if config.get("pe")=="no":
+    if config.get("fastq_numb")==2:
+        include:
+            include_prefix + "/umi_bclconvert_se.smk"
+    else:
+        include:
+            include_prefix + "/umi_se.smk"
+    include:
+        include_prefix + "/trimming_se.smk"
+    include:
+        include_prefix + "/alignment_se.smk"
+
+
+
+else:
+    # include:
+        # include_prefix + "/umi.smk"
+    include:
+        include_prefix + "/trimming.smk"
+    include:
+        include_prefix + "/alignment.smk"
+    if config.get("fastq_numb")==2:
+        include:
+            include_prefix + "/umi_bclconvert.smk"
+    else:
+        include:
+            include_prefix + "/umi.smk"
 include:
     include_prefix + "/samtools.smk"
-if config.get("fastq_numb")==2:
-    include:
-        include_prefix + "/umi_bclconvert.smk"
-else:
-    include:
-        include_prefix + "/umi.smk"
 include:
     include_prefix + "/bsqr.smk"
 include:
@@ -80,3 +103,7 @@ include:
     include_prefix + "/vcf.smk"
 include:
     include_prefix + "/plasma_pileup.smk"
+include:
+    include_prefix + "/other_callers.smk"
+include:
+    include_prefix + "/call_combiners.smk"

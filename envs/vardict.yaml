@@ -1,0 +1,4 @@
+channels:
+  - bioconda
+dependencies:
+  - vardict==2019.06.04

@@ -176,6 +176,17 @@ def ensure_dir(path, force=False):
         if not os.path.isdir(path):
             raise
 
+
+def exist_dir(path, delete=False):
+    try:
+        if delete and os.path.exists(path):
+            shutil.rmtree(path)
+        # os.makedirs(path)
+    except OSError:
+        if not os.path.isdir(path):
+            raise
+
+
 def _multi_flag_dbi(flag, arguments):
     if arguments:
         return " ".join(flag + " " + arg for arg in arguments)
