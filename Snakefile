@@ -42,7 +42,8 @@ rule all:
         expand("somatic_combiner/{patient.patient}.somatic_combiner.vcf",patient=patients.reset_index().itertuples()),
         expand("somaticseq/{patient.patient}/Consensus.sSNV.vcf",patient=patients.reset_index().itertuples()),
         expand("somatic_combiner/{patient.patient}.somatic_combiner_annotated.flt.txt",patient=patients.reset_index().itertuples()),
-
+        # expand("somaticseq/{patient.patient}.somaticseq_annotated.flt.txt",patient=patients.reset_index().itertuples()),
+        expand("somaticseq/{patient.patient}_somaticseq.vcf",patient=patients.reset_index().itertuples()),
 ##### load rules #####
 include_prefix="rules"
 dima_path="dima/"

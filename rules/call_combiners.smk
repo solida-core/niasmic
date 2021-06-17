@@ -78,15 +78,66 @@ rule somaticseq:
         "--strelka-indel {input.strelka_indels} "
 
 
-
-rule somaticseq_move:
+rule somaticseq_fix_vcf:
     input:
         snv="somaticseq/{patient}/Consensus.sSNV.vcf",
         indel="somaticseq/{patient}/Consensus.sINDEL.vcf"
     output:
-        snv="somaticseq/{patient}_Consensus.sSNV.vcf",
-        indel="somaticseq/{patient}_Consensus.sINDEL.vcf",
+        snv="somaticseq/{patient}/Consensus.sSNV_header.vcf",
+        indel="somaticseq/{patient}/Consensus.sINDEL_header.vcf"
+    params:
+        dict="/ELS/els9/users/biosciences/references/ucsc/hg19/ucsc.hg19.dict"
+    conda:
+        "../envs/picard.yaml"
     threads: 2
     shell:
-        "mv {input.snv} {output.snv} && "
-        "mv {input.indel} {output.indel} "
+        "picard UpdateVcfSequenceDictionary "
+        "I={input.snv} "
+        "O={output.snv} "
+        "SD={params.dict} ; "
+        "picard UpdateVcfSequenceDictionary "
+        "I={input.indel} "
+        "O={output.indel} "
+        "SD={params.dict} "
+
+
+rule somaticseq_tabix_vcf:
+    input:
+        snv="somaticseq/{patient}/Consensus.sSNV_header.vcf",
+        indel="somaticseq/{patient}/Consensus.sINDEL_header.vcf"
+    output:
+        snv="somaticseq/{patient}/Consensus.sSNV_header.vcf.gz",
+        indel="somaticseq/{patient}/Consensus.sINDEL_header.vcf.gz",
+        tbi_snv="somaticseq/{patient}/Consensus.sSNV_header.vcf.gz.tbi",
+        tbi_indel="somaticseq/{patient}/Consensus.sINDEL_header.vcf.gz.tbi"
+    params:
+        dict="/ELS/els9/users/biosciences/references/ucsc/hg19/ucsc.hg19.dict"
+    conda:
+        "../envs/samtools.yaml"
+    threads: 2
+    shell:
+        "bgzip {input.snv} && "
+        "bgzip {input.indel} ; "
+        "tabix -p vcf "
+        "{output.snv} && "
+        "tabix -p vcf "
+        "{output.indel} "
+
+
+rule somaticseq_concat:
+    input:
+        snv="somaticseq/{patient}/Consensus.sSNV_header.vcf.gz",
+        indel="somaticseq/{patient}/Consensus.sINDEL_header.vcf.gz",
+        tbi_snv="somaticseq/{patient}/Consensus.sSNV_header.vcf.gz.tbi",
+        tbi_indel="somaticseq/{patient}/Consensus.sINDEL_header.vcf.gz.tbi"
+    output:
+        "somaticseq/{patient}_somaticseq.vcf"
+    conda:
+        "../envs/bcftools.yaml"
+    threads: 2
+    shell:
+        "bcftools concat "
+        "{input.snv} "
+        "{input.indel} "
+        "-o {output} "
+        "-O v -a"
